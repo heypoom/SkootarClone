@@ -1,0 +1,17 @@
+{
+  "name": "SkootarClone",
+  "version": "1.0.0",
+  "description": "Simple Skootar Clone.",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "emotion": "^7.2.2",
+    "next": "^3.2.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-google-maps": "^7.3.0",
+    "react-ink": "^6.2.0",
+    "react-redux": "^5.0.6",
+    "redux": "^3.7.2"
+  }
+}
