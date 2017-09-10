@@ -25,7 +25,7 @@ export function* appWatcherSaga() {
 }
 
 const initial = {
-  search: [''],
+  search: ['', ''],
   pins: []
 }
 
