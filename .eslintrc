@@ -3,6 +3,7 @@
   "parser": "babel-eslint",
   "rules": {
     "space-before-function-paren": 0,
+    "generator-star-spacing": 0,
     "react/prop-types": 0
   }
 }

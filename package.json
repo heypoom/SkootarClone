@@ -9,12 +9,15 @@
     "emotion": "^7.2.2",
     "google-map-react": "^0.24.0",
     "next": "^3.2.2",
+    "nprogress": "^0.2.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-ink": "^6.2.0",
+    "react-places-autocomplete": "^5.4.3",
     "react-redux": "^5.0.6",
     "recompose": "^0.25.0",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "redux-saga": "^0.15.6"
   },
   "scripts": {
     "dev": "node server.js",

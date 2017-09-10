@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {connect} from 'react-redux'
 import GoogleMap from 'google-map-react'
 
 import Pin from './MapPin'
@@ -7,12 +8,13 @@ import Polyline from './MapPolyline'
 import {GMAPS_API_KEY} from '../core'
 import {NaturalMap} from '../core/mapstyle'
 
+// Zoomlevel 17 is perfect for nearby locations
 const config = {
   bootstrapURLKeys: {
     key: GMAPS_API_KEY
   },
   defaultCenter: [13.7460577, 100.52407889999995],
-  defaultZoom: 17,
+  defaultZoom: 10,
   options: () => ({
     gestureHandling: 'greedy',
     styles: NaturalMap
@@ -55,4 +57,8 @@ class Map extends Component {
   }
 }
 
-export default Map
+const mapStateToProps = state => ({
+  pins: state.app.pins
+})
+
+export default connect(mapStateToProps)(Map)

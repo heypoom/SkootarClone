@@ -3,6 +3,8 @@ import Document, {Head, Main, NextScript} from 'next/document'
 import {extractCritical} from 'emotion-server'
 import {flush} from 'emotion'
 
+import {GMAPS_API_KEY} from '../core'
+
 const dev = process.env.NODE_ENV !== 'production'
 
 export default class BaseDocument extends Document {
@@ -38,6 +40,7 @@ export default class BaseDocument extends Document {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <style dangerouslySetInnerHTML={{__html: this.props.css}} />
         <link href='https://fonts.googleapis.com/css?family=Roboto:300,400' rel='stylesheet' />
+        <script src={`https://maps.googleapis.com/maps/api/js?key=${GMAPS_API_KEY}&libraries=places`} />
       </Head>
       <body>
         <Main />
