@@ -3,7 +3,7 @@ import styled from 'react-emotion'
 
 import App from '../components/App'
 import Map from '../components/Map'
-import Find from '../components/Find'
+import FindGroup from '../components/FindGroup'
 
 const FullView = styled.div`
   display: flex;
@@ -32,7 +32,7 @@ const Top = styled.div`
 const Landing = () => (
   <FullView>
     <Top>
-      <Find />
+      <FindGroup />
     </Top>
     <Map />
   </FullView>
