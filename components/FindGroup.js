@@ -8,6 +8,8 @@ import Find from './Find'
 import {search, newPlace} from '../ducks/app'
 
 const AddIcon = styled(Icon)`
+  position: absolute;
+  right: 0;
   filter: drop-shadow(0 2px 5px rgba(0,0,0,0.16));
   transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
   cursor: pointer;
