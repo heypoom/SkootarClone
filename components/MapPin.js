@@ -15,15 +15,17 @@ const startPinHoverColor = '#27ae60'
 const endPinColor = '#e74c3c'
 const endPinHoverColor = '#c0392b'
 
-const getPinColor = type => ({
-  start: startPinColor,
-  end: endPinColor
-})[type] || pinColor
+const getPinColor = type =>
+  ({
+    start: startPinColor,
+    end: endPinColor
+  }[type] || pinColor)
 
-const getPinHoverColor = type => ({
-  start: startPinHoverColor,
-  end: endPinHoverColor
-})[type] || pinHoverColor
+const getPinHoverColor = type =>
+  ({
+    start: startPinHoverColor,
+    end: endPinHoverColor
+  }[type] || pinHoverColor)
 
 /*
   Custom Map Pin Components
@@ -79,7 +81,7 @@ const PinItem = styled.div`
   position: absolute;
   top: 50%;
   width: 30px;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
 
   &::after {
@@ -90,7 +92,8 @@ const PinItem = styled.div`
     margin: 8px 0 0 8px;
     position: absolute;
     width: 14px;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16),
+      0 2px 10px 0 rgba(0, 0, 0, 0.12);
   }
 
   &:hover {
@@ -100,7 +103,7 @@ const PinItem = styled.div`
 `
 
 const PinEffect = styled.div`
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 50%;
   height: 14px;
   left: 50%;
@@ -123,17 +126,18 @@ const PinEffect = styled.div`
     position: absolute;
     width: 40px;
   }
+`
 
-  &:hover::after {
-    background: ${props => getPinHoverColor(props.type)};
-  }
+const PinContainer = styled.div`
+  transform: translateY(-18px);
+  z-index: 1;
 `
 
 const Pin = ({name, onClick, type}) => (
-  <div onClick={onClick}>
+  <PinContainer onClick={onClick}>
     <PinItem type={type} />
     <PinEffect type={type} />
-  </div>
+  </PinContainer>
 )
 
 export default Pin

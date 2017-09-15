@@ -19,8 +19,9 @@ const inputStyle = css`
   font-weight: 300;
   outline: none;
   color: #333;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
+  width: 100%;
 
   &:hover {
     border-bottom: 2px solid #9b59b6;
@@ -34,7 +35,13 @@ const autocompleteStyle = css`
   z-index: 1;
   font-family: Roboto, Sukhumvit Set, sans-serif;
   border: none;
-  box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+`
+
+const autocompleteRoot = css`
+  position: relative;
+  padding-bottom: 0px;
+  width: 100%;
 `
 
 const SearchBox = styled.div`
@@ -46,7 +53,7 @@ const SearchBox = styled.div`
 `
 
 const PinIcon = styled(Icon)`
-  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.16));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.16));
   stroke: white;
   stroke-width: 1.3;
   transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
@@ -74,7 +81,9 @@ const Find = ({inputProps, onSelect, geocode, classNames}) => (
 const injectProps = props => ({
   // Since react-places-autocomplete does not support emotion/styled-components,
   // we can re-generate the className at runtime, then pass it to PlacesAutocomplete.
+  // prettier-ignore
   classNames: {
+    root: css`${autocompleteRoot}`,
     input: css`${inputStyle}`,
     autocompleteContainer: css`${autocompleteStyle}`
   },
@@ -89,9 +98,6 @@ const injectProps = props => ({
   }
 })
 
-const enhance = compose(
-  connect(null, {geocode}),
-  withProps(injectProps)
-)
+const enhance = compose(connect(null, {geocode}), withProps(injectProps))
 
 export default enhance(Find)

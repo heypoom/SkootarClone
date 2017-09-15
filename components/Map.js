@@ -22,7 +22,7 @@ const config = {
   yesIWantToUseGoogleMapApiInternals: true
 }
 
-const getPinType = (index, total) => {
+const pinColor = (index, total) => {
   if (index === 0) {
     return 'start'
   } else if (total - 1 === index) {
@@ -32,26 +32,27 @@ const getPinType = (index, total) => {
   return null
 }
 
+// This will inject the Google Map Internal APIs into the map.
 class Map extends Component {
   state = {}
-
   onLoad = api => this.setState(api)
 
   render = () => {
     const {region, pins, onMarkerClick} = this.props
-    const {map, maps} = this.state
+    const api = this.state
 
     return (
       <GoogleMap center={region} onGoogleApiLoaded={this.onLoad} {...config}>
-        {pins && pins.map((props, i) => (
-          <Pin
-            key={i}
-            type={getPinType(i, pins.length)}
-            onClick={onMarkerClick}
-            {...props}
-          />
-        ))}
-        <Polyline map={map} maps={maps} path={pins} />
+        {pins &&
+          pins.map((props, i) => (
+            <Pin
+              key={i}
+              type={pinColor(i, pins.length)}
+              onClick={onMarkerClick}
+              {...props}
+            />
+          ))}
+        <Polyline path={pins} {...api} />
       </GoogleMap>
     )
   }

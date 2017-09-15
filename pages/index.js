@@ -27,6 +27,10 @@ const Top = styled.div`
   top: 1em;
   left: 1.8em;
   z-index: 1;
+
+  @media screen and (max-width: 640px) {
+    width: 80%;
+  }
 `
 
 const Landing = () => (
