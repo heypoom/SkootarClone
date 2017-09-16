@@ -2,8 +2,9 @@ import React from 'react'
 import styled from 'react-emotion'
 import {connect} from 'react-redux'
 
-import Icon from '../components/Icon'
-import {inputStyle} from '../components/Find'
+import Icon from './Icon'
+import {pinType, getPinColor} from './MapPin'
+import {inputStyle} from './Find'
 
 // prettier-ignore
 const Recipient = styled.div`
@@ -58,7 +59,7 @@ const PinIcon = styled(Icon)`
 
   &:hover {
     transform: scale(1.1) rotate(360deg);
-    fill: #2ecc71;
+    fill: ${props => getPinColor(props.type)};
   }
 `
 
@@ -67,13 +68,14 @@ const LocationText = styled.div`
   flex-direction: column;
 `
 
+// prettier-ignore
 const Recipients = ({pins}) => (
   <div>
-    {// prettier-ignore
+    {
       pins.map((pin, index) => pin && (
         <Recipient key={index}>
           <LocationLabel>
-            <PinIcon i='location' size={1.6} fill='#555' />
+            <PinIcon i='location' size={1.6} fill='#555' type={pinType(index)} />
             <LocationText>
               {pin.name}
               <AddressLabel>

@@ -15,7 +15,7 @@ const config = {
     key: GMAPS_API_KEY
   },
   defaultCenter: [13.7460577, 100.52407889999995],
-  defaultZoom: 17,
+  defaultZoom: 15,
   options: () => ({
     gestureHandling: 'greedy',
     styles: NaturalMap

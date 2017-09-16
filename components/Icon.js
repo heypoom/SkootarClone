@@ -16,6 +16,10 @@ const icons = {
 const Svg = styled(props => <svg {...props} />)`
   width: ${props => props.size || 1.5}em;
   height: ${props => props.size || 1.5}em;
+
+  min-width: ${props => props.size || 1.5}em;
+  min-height: ${props => props.size || 1.5}em;
+
   fill: ${props => props.fill || '#ffffff'};
   opacity: ${props => props.opacity || 1};
 `

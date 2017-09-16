@@ -89,7 +89,7 @@ const RemoveIcon = styled(Icon)`
 // prettier-ignore
 const Find = ({inputProps, onSelect, submit, classNames, remove, index, total}) => (
   <SearchBox>
-    <PinIcon i='location' size={2.5} onClick={submit} type={pinType(index, total)} />
+    <PinIcon i='location' size={1.9} onClick={submit} type={pinType(index, total)} />
     <PlacesAutocomplete
       inputProps={inputProps}
       classNames={classNames}
