@@ -30,19 +30,9 @@ const Top = styled.div`
   left: 1.8em;
   z-index: 1;
 
-  overflow-y: scroll;
-  padding-right: 0.8em;
-  bottom: 4em;
-
   @media screen and (max-width: 640px) {
     width: 88%;
   }
-`
-
-const Bottom = styled.div`
-  width: 100%;
-  padding: 1em;
-  background: white;
 `
 
 const Landing = () => (

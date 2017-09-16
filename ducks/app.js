@@ -1,7 +1,6 @@
 import Router from 'next/router'
 import Polyline from '@mapbox/polyline'
 import {call, put, select, takeEvery} from 'redux-saga/effects'
-import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 
 import {makeAction, createReducer, remove, change} from './helper'
 
@@ -13,10 +12,10 @@ export const NEW_PLACE = 'NEW_PLACE'
 
 export const SET_LOCATION = 'SET_LOCATION'
 export const SET_PIN = 'SET_PIN'
+export const SET_PINS = 'SET_PINS'
 export const REMOVE_PIN = 'REMOVE_PIN'
 
 export const SET_POLYLINE = 'SET_POLYLINE'
-export const COMPUTE_TOTAL_PATHS = 'COMPUTE_TOTAL_PATHS'
 export const SET_TOTAL_PATHS = 'SET_TOTAL_PATHS'
 
 export const TO_SUMMARY = 'TO_SUMMARY'
@@ -27,10 +26,10 @@ export const newPlace = makeAction(NEW_PLACE)
 
 export const setLocation = makeAction(SET_LOCATION, 'index', 'address')
 export const setPin = makeAction(SET_PIN, 'position', 'index')
+export const setPins = makeAction(SET_PINS)
 export const removePin = makeAction(REMOVE_PIN)
 
 export const setPolyline = makeAction(SET_POLYLINE)
-export const computeTotalPaths = makeAction(COMPUTE_TOTAL_PATHS)
 export const setTotalPaths = makeAction(SET_TOTAL_PATHS, 'distance', 'duration')
 
 export const toSummary = makeAction(TO_SUMMARY)
@@ -51,19 +50,6 @@ const sum = key => paths =>
 
 const totalDistance = sum('distance')
 const totalDuration = sum('duration')
-
-// Geocodes the location from the places dropdown.
-export function* locationSaga({payload: {index, address}}) {
-  const result = yield call(geocodeByAddress, address)
-  const position = yield call(getLatLng, result[0])
-  const formatted = result[0].formatted_address
-
-  // Side Effect: Adds a new map pin using the retrieved coordinates.
-  yield put(setPin({...position, address: formatted, name: address}, index))
-
-  // Side Effect: Re-compute the total distances/durations everytime a new pin is added.
-  yield put(computeTotalPaths())
-}
 
 const computeRoutes = config =>
   new Promise((resolve, reject) => {
@@ -89,53 +75,83 @@ export function* toSummarySaga() {
   }
 }
 
-// Calculates the trip distance and duration using the polyline.
-export function* computeTotalSaga() {
-  // Retrieves the pins from the store
-  const pins = (yield select(state => state.app.pins) || []).filter(pin => pin)
+// Handles location changes in the application
+export function* locationSaga({payload: {index, address}}) {
+  // Retrieves the places from the search boxes
+  // prettier-ignore
+  const places = (yield select(state => state.app.search) || []).filter(pin => pin)
 
-  // If there are more than 1 pins, retrieve the distance.
-  if (google && pins.length > 1) {
-    // Slices the origin, destination and waypoints from the pins.
-    const origin = pins[0]
-    const destination = pins[pins.length - 1]
-    const waypoints = pins.slice(1, pins.length - 1)
+  // Slices the origin, destination and waypoints from the places.
+  const origin = places[0]
+  const destination = places[places.length - 1]
+  const waypoints = places.slice(1, places.length - 1)
 
-    // Configure the Google Maps Direction Services API
-    // We'll use this instead of the Distance Matrix, so we can use the waypoints.
+  console.log('Searches', {origin, destination, waypoints})
 
-    const config = {
-      origin: new google.maps.LatLng(origin.lat, origin.lng),
-      destination: new google.maps.LatLng(destination.lat, destination.lng),
-      waypoints: waypoints.map(pin => ({
-        location: new google.maps.LatLng(pin.lat, pin.lng)
-      })),
-      travelMode: 'DRIVING'
-    }
-
-    const directions = yield call(computeRoutes, config)
-    const {routes} = directions
-    console.log('Directions:', directions)
-
-    if (routes) {
-      // Retrieve the distance in km, and duration in minutes
-      const paths = routes.map(legSelector).reduce(flatten, [])
-      const distance = (totalDistance(paths) / 1000).toFixed(2)
-      const duration = Math.round(totalDuration(paths) / 60)
-
-      const poly = yield call(Polyline.decode, routes[0].overview_polyline)
-      const lines = poly.map(line => new google.maps.LatLng(line[0], line[1]))
-
-      yield put(setPolyline(lines))
-
-      yield put(setTotalPaths(distance, duration))
-    }
+  // Configure the Google Maps Direction Services API
+  const config = {
+    origin,
+    destination,
+    waypoints: waypoints.map(location => ({location})),
+    travelMode: 'DRIVING'
   }
+
+  const directions = yield call(computeRoutes, config)
+  const {routes} = directions
+
+  if (routes[0]) {
+    // Update the total distance in km, and duration in minutes
+    const paths = routes.map(legSelector).reduce(flatten, [])
+    const distance = (totalDistance(paths) / 1000).toFixed(2)
+    const duration = Math.round(totalDuration(paths) / 60)
+
+    yield put(setTotalPaths(distance, duration))
+
+    // Retrieve the coordinates required for markers
+    const legs = routes[0].legs
+    const dest = legs[legs.length - 1]
+
+    const coords = [
+      ...legs.map((leg, index) => ({
+        address: leg.start_address,
+        lat: leg.start_location.lat(),
+        lng: leg.start_location.lng()
+      })),
+      {
+        address: dest.end_address,
+        lat: dest.end_location.lat(),
+        lng: dest.end_location.lng()
+      }
+    ]
+
+    const pins = coords.map((coord, index) => ({
+      ...coord,
+      name: places[index]
+    }))
+
+    // Adds a new map pin using the retrieved coordinates.
+    yield put(setPins(pins))
+
+    // Decodes the polyline, then render it into the map
+    const poly = yield call(Polyline.decode, routes[0].overview_polyline)
+    const lines = poly.map(line => new google.maps.LatLng(line[0], line[1]))
+    yield put(setPolyline(lines))
+  }
+}
+
+// Geocodes the location from the places dropdown. Unused.
+export function* geocodeSaga() {
+  // import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
+  // const result = yield call(geocodeByAddress, address)
+  // const position = yield call(getLatLng, result[0])
+  // const formatted = result[0].formatted_address
+  //
+  // Adds a new map pin using the retrieved coordinates.
+  // yield put(setPin({...position, address: formatted, name: address}, index))
 }
 
 export function* appWatcherSaga() {
   yield takeEvery(SET_LOCATION, locationSaga)
-  yield takeEvery(COMPUTE_TOTAL_PATHS, computeTotalSaga)
   yield takeEvery(TO_SUMMARY, toSummarySaga)
 }
 
@@ -152,6 +168,7 @@ export default createReducer(initial, state => ({
     ...state,
     pins: change(index, position, state.pins)
   }),
+  [SET_PINS]: pins => ({...state, pins}),
   [REMOVE_PIN]: index => {
     if (state.search.length > 1) {
       return {
