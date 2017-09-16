@@ -29,7 +29,7 @@ class Map extends Component {
   onLoad = api => this.setState(api)
 
   render = () => {
-    const {region, pins, onMarkerClick} = this.props
+    const {region, pins, polyline, onMarkerClick} = this.props
     const api = this.state
 
     return (
@@ -43,14 +43,15 @@ class Map extends Component {
               {...props}
             />
           ))}
-        <Polyline path={pins} {...api} />
+        <Polyline path={polyline} {...api} />
       </GoogleMap>
     )
   }
 }
 
 const mapStateToProps = state => ({
-  pins: state.app.pins
+  pins: state.app.pins,
+  polyline: state.app.polyline
 })
 
 export default connect(mapStateToProps)(Map)

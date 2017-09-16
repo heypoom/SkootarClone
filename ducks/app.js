@@ -1,4 +1,5 @@
 import Router from 'next/router'
+import Polyline from '@mapbox/polyline'
 import {call, put, select, takeEvery} from 'redux-saga/effects'
 import {geocodeByAddress, getLatLng} from 'react-places-autocomplete'
 
@@ -14,6 +15,7 @@ export const SET_LOCATION = 'SET_LOCATION'
 export const SET_PIN = 'SET_PIN'
 export const REMOVE_PIN = 'REMOVE_PIN'
 
+export const SET_POLYLINE = 'SET_POLYLINE'
 export const COMPUTE_TOTAL_PATHS = 'COMPUTE_TOTAL_PATHS'
 export const SET_TOTAL_PATHS = 'SET_TOTAL_PATHS'
 
@@ -27,6 +29,7 @@ export const setLocation = makeAction(SET_LOCATION, 'index', 'address')
 export const setPin = makeAction(SET_PIN, 'position', 'index')
 export const removePin = makeAction(REMOVE_PIN)
 
+export const setPolyline = makeAction(SET_POLYLINE)
 export const computeTotalPaths = makeAction(COMPUTE_TOTAL_PATHS)
 export const setTotalPaths = makeAction(SET_TOTAL_PATHS, 'distance', 'duration')
 
@@ -120,6 +123,11 @@ export function* computeTotalSaga() {
       const distance = (totalDistance(paths) / 1000).toFixed(2)
       const duration = Math.round(totalDuration(paths) / 60)
 
+      const poly = yield call(Polyline.decode, routes[0].overview_polyline)
+      const lines = poly.map(line => new google.maps.LatLng(line[0], line[1]))
+
+      yield put(setPolyline(lines))
+
       yield put(setTotalPaths(distance, duration))
     }
   }
@@ -135,7 +143,8 @@ const initial = {
   search: ['', ''],
   pins: [],
   distance: 0,
-  duration: 0
+  duration: 0,
+  polyline: null
 }
 
 export default createReducer(initial, state => ({
@@ -165,5 +174,6 @@ export default createReducer(initial, state => ({
     ...state,
     distance,
     duration
-  })
+  }),
+  [SET_POLYLINE]: polyline => ({...state, polyline})
 }))
