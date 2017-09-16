@@ -2,34 +2,25 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import GoogleMap from 'google-map-react'
 
-import Pin from './MapPin'
+import Pin, {pinType} from './MapPin'
 import Polyline from './MapPolyline'
 
 import {GMAPS_API_KEY} from '../core'
 import {NaturalMap} from '../core/mapstyle'
 
 // Zoomlevel 17 is perfect for nearby locations
+// Zoomlevel 10 is for regional view
 const config = {
   bootstrapURLKeys: {
     key: GMAPS_API_KEY
   },
   defaultCenter: [13.7460577, 100.52407889999995],
-  defaultZoom: 10,
+  defaultZoom: 17,
   options: () => ({
     gestureHandling: 'greedy',
     styles: NaturalMap
   }),
   yesIWantToUseGoogleMapApiInternals: true
-}
-
-const pinColor = (index, total) => {
-  if (index === 0) {
-    return 'start'
-  } else if (total - 1 === index) {
-    return 'end'
-  }
-
-  return null
 }
 
 // This will inject the Google Map Internal APIs into the map.
@@ -47,7 +38,7 @@ class Map extends Component {
           pins.map((props, i) => (
             <Pin
               key={i}
-              type={pinColor(i, pins.length)}
+              type={pinType(i, pins.length)}
               onClick={onMarkerClick}
               {...props}
             />

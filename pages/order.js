@@ -20,9 +20,13 @@ const Page = styled.div`
 `
 
 const Container = styled.main`
-  padding: 3.8em 2em;
-  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
   margin: 0 auto;
+  max-width: 600px;
+  padding: 2em 2em 4em 2em;
 `
 
 const ServicesLabel = styled.div`
@@ -32,7 +36,7 @@ const ServicesLabel = styled.div`
   margin-bottom: 0.5em;
 `
 
-const ExtraContainer = styled.div`margin-bottom: 1em;`
+const ExtraContainer = styled.div`margin-bottom: 0.5em;`
 
 // prettier-ignore
 const AddIcon = styled(Icon)`
@@ -105,9 +109,19 @@ const EnhancedSummary = connect(state => ({
   pricing: state.app.pricing || getPricing(state.app.distance)
 }))(Summary)
 
-const Inline = styled.div`
+const Actions = styled.div`
   display: flex;
   align-items: center;
+
+  width: 100%;
+  margin: 0 auto;
+  max-width: 600px;
+  background: #fbfbfb;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
 `
 
 // prettier-ignore
@@ -128,6 +142,7 @@ const Button = styled.a`
 
   color: #777;
   border: 1px solid #999;
+  background: white;
 
   &:hover {
     transform: scale(1.05);
@@ -144,24 +159,36 @@ const Button = styled.a`
   `}
 `
 
+const Flex = styled.div`flex: 1;`
+
+const Back = () => (
+  <Actions>
+    <Link href='/' passHref prefetch>
+      <Button>
+        Back
+        <Ink />
+      </Button>
+    </Link>
+    <Button primary>
+      Confirm
+      <Ink />
+    </Button>
+  </Actions>
+)
+
 const Order = () => (
   <Page>
     <Container>
-      <Recipients />
-      <Extras />
-      <EnhancedSummary />
-      <Inline>
-        <Link href='/' passHref prefetch>
-          <Button>
-            Back
-            <Ink />
-          </Button>
-        </Link>
-        <Button primary>
-          Confirm
-          <Ink />
-        </Button>
-      </Inline>
+      <Flex>
+        <Recipients />
+      </Flex>
+      <Flex>
+        <Extras />
+      </Flex>
+      <Flex>
+        <EnhancedSummary />
+      </Flex>
+      <Back />
     </Container>
   </Page>
 )

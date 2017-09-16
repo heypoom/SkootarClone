@@ -6,26 +6,36 @@ import {keyframes} from 'emotion'
   Pin Colors are defined here.
 */
 
-const pinColor = '#00cae9'
-const pinHoverColor = '#3498db'
+export const pinColor = '#00cae9'
+export const pinHoverColor = '#3498db'
 
-const startPinColor = '#2ecc71'
-const startPinHoverColor = '#27ae60'
+export const startPinColor = '#2ecc71'
+export const startPinHoverColor = '#27ae60'
 
-const endPinColor = '#e74c3c'
-const endPinHoverColor = '#c0392b'
+export const endPinColor = '#e74c3c'
+export const endPinHoverColor = '#c0392b'
 
-const getPinColor = type =>
-  ({
-    start: startPinColor,
-    end: endPinColor
-  }[type] || pinColor)
+export const pinType = (index, total) => {
+  if (index === 0) {
+    return 'start'
+  } else if (total - 1 === index) {
+    return 'end'
+  }
 
-const getPinHoverColor = type =>
-  ({
-    start: startPinHoverColor,
-    end: endPinHoverColor
-  }[type] || pinHoverColor)
+  return null
+}
+
+// prettier-ignore
+export const getPinColor = type => ({
+  start: startPinColor,
+  end: endPinColor
+}[type] || pinColor)
+
+// prettier-ignore
+export const getPinHoverColor = type => ({
+  start: startPinHoverColor,
+  end: endPinHoverColor
+}[type] || pinHoverColor)
 
 /*
   Custom Map Pin Components

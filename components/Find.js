@@ -6,13 +6,14 @@ import {compose, withProps} from 'recompose'
 import PlacesAutocomplete from 'react-places-autocomplete'
 
 import Icon from './Icon'
+import {pinType, getPinColor} from './MapPin'
 
 import {setLocation, removePin} from '../ducks/app'
 
 export const inputStyle = css`
   background: #ffffff;
   border: none;
-  border-bottom: 2px solid #00cae9;
+  border-bottom: 2px solid #555;
   padding: 0.3em 1em;
   font-size: 1.2em;
   font-family: Roboto, Sukhumvit Set, sans-serif;
@@ -24,7 +25,6 @@ export const inputStyle = css`
   width: 100%;
 
   &:hover {
-    border-bottom: 2px solid #9b59b6;
     transform: scale(1.05);
   }
 `
@@ -59,9 +59,11 @@ const PinIcon = styled(Icon)`
   transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
   cursor: pointer;
   margin-right: 1em;
+  fill: #555;
 
   &:hover {
-    transform: scale(1.1) rotate(180deg);
+    transform: scale(1.1) rotate(360deg);
+    fill: ${props => getPinColor(props.type)};
   }
 `
 
@@ -78,7 +80,7 @@ const RemoveIcon = styled(Icon)`
 
   &:hover {
     transform: scale(1.1);
-    fill: #c0392b;
+    fill: #e74c3c;
   }
 `
 
@@ -87,7 +89,7 @@ const RemoveIcon = styled(Icon)`
 // prettier-ignore
 const Find = ({inputProps, onSelect, submit, classNames, remove, index, total}) => (
   <SearchBox>
-    <PinIcon i='location' size={2.5} fill='#00cae9' onClick={submit} />
+    <PinIcon i='location' size={2.5} onClick={submit} type={pinType(index, total)} />
     <PlacesAutocomplete
       inputProps={inputProps}
       classNames={classNames}
@@ -100,26 +102,43 @@ const Find = ({inputProps, onSelect, submit, classNames, remove, index, total}) 
         <RemoveIcon
           i='remove_circle'
           size={1.75}
-          fill='#e74c3c'
+          fill='#555'
           onClick={remove}
         />
       )}
   </SearchBox>
 )
 
+export const placeholder = (index, total) => {
+  if (index === 0) {
+    return 'Find Starting Location'
+  } else if (total - 1 === index) {
+    return 'Find Destination'
+  }
+
+  return 'Find Location'
+}
+
+// prettier-ignore
 const injectProps = props => ({
   // Since react-places-autocomplete does not support emotion/styled-components,
   // we can re-generate the className at runtime, then pass it to PlacesAutocomplete.
-  // prettier-ignore
   classNames: {
     root: css`${autocompleteRoot}`,
-    input: css`${inputStyle}`,
+    input: css`
+      composes: ${inputStyle};
+      border-bottom: 2px solid #555;
+
+      &:hover {
+        border-bottom: 2px solid ${getPinColor(pinType(props.index, props.total))};
+      }
+    `,
     autocompleteContainer: css`${autocompleteStyle}`
   },
   inputProps: {
     value: props.value,
     onChange: props.onChange,
-    placeholder: 'Find Location'
+    placeholder: placeholder(props.index, props.total)
   },
   submit: address => {
     props.setLocation(props.index, address)

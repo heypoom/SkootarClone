@@ -6,7 +6,7 @@ import Icon from '../components/Icon'
 import {inputStyle} from '../components/Find'
 
 // prettier-ignore
-const Form = styled.div`
+const Recipient = styled.div`
   margin-bottom: 1em;
 `
 
@@ -39,7 +39,7 @@ const Input = styled.input`
   border-bottom: 2px solid #555;
 
   &:hover {
-    border-bottom: 2px solid #00cae9;
+    border-bottom: 2px solid #2ecc71;
   }
 
   @media screen and (max-width: 490px) {
@@ -50,6 +50,16 @@ const Input = styled.input`
 // prettier-ignore
 const PinIcon = styled(Icon)`
   margin-right: 1em;
+  transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
+
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.15));
+  stroke: white;
+  stroke-width: 1.1;
+
+  &:hover {
+    transform: scale(1.1) rotate(360deg);
+    fill: #2ecc71;
+  }
 `
 
 const LocationText = styled.div`
@@ -61,7 +71,7 @@ const Recipients = ({pins}) => (
   <div>
     {// prettier-ignore
       pins.map((pin, index) => pin && (
-        <Form key={index}>
+        <Recipient key={index}>
           <LocationLabel>
             <PinIcon i='location' size={1.6} fill='#555' />
             <LocationText>
@@ -75,7 +85,7 @@ const Recipients = ({pins}) => (
             <Input placeholder='Name' />
             <Input placeholder='Mobile' />
           </Row>
-        </Form>
+        </Recipient>
       ))}
   </div>
 )

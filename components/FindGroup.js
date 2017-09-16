@@ -18,6 +18,7 @@ const AddIcon = styled(Icon)`
 
   &:hover {
     transform: scale(1.1) rotate(180deg);
+    fill: #03a9f4;
   }
 `
 
