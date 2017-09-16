@@ -140,20 +140,18 @@ const injectProps = props => ({
     onChange: props.onChange,
     placeholder: placeholder(props.index, props.total)
   },
-  submit: address => {
-    props.setLocation(props.index, address)
-  },
   remove: () => {
     props.removePin(props.index)
+    props.submit()
   },
   onSelect: address => {
     props.onChange(address)
-    props.setLocation(props.index, address)
+    props.submit()
   }
 })
 
 const enhance = compose(
-  connect(null, {setLocation, removePin}),
+  connect(null, {submit: setLocation, removePin}),
   withProps(injectProps)
 )
 
