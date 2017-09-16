@@ -20,7 +20,16 @@ export default class Polyline extends Component {
     const {path, map, maps} = this.props
 
     if (map && maps && path) {
-      this.line = new maps.Polyline({...config, path})
+      // prettier-ignore
+      const icons = [{
+        icon: {
+          path: maps.SymbolPath.FORWARD_CLOSED_ARROW
+        },
+        offset: '100%'
+        // repeat: '50%'
+      }]
+
+      this.line = new maps.Polyline({...config, icons, path})
       this.line.setMap(map)
     }
 

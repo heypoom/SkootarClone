@@ -67,7 +67,7 @@ const PinIcon = styled(Icon)`
 
 const Find = ({inputProps, onSelect, geocode, classNames}) => (
   <SearchBox>
-    <PinIcon i='location' size={2.2} fill='#00cae9' onClick={geocode} />
+    <PinIcon i='location' size={2.5} fill='#00cae9' onClick={geocode} />
     <PlacesAutocomplete
       inputProps={inputProps}
       classNames={classNames}
