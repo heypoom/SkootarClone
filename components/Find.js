@@ -8,7 +8,7 @@ import PlacesAutocomplete from 'react-places-autocomplete'
 import Icon from './Icon'
 import {pinType, getPinColor} from './MapPin'
 
-import {setLocation, removePin} from '../ducks/app'
+import {updateLocation, removePin} from '../ducks/app'
 
 export const inputStyle = css`
   background: #ffffff;
@@ -151,7 +151,7 @@ const injectProps = props => ({
 })
 
 const enhance = compose(
-  connect(null, {submit: setLocation, removePin}),
+  connect(null, {submit: updateLocation, removePin}),
   withProps(injectProps)
 )
 

@@ -57,3 +57,10 @@ export const change = (index, item, items) => {
 
   return [...data]
 }
+
+// Flatten an array
+export const flatten = (acc, cur) => acc.concat(cur)
+
+// Get the sum of an array
+export const sum = key => paths =>
+  paths.map(x => x[key]).reduce((prev, cur) => prev + cur)

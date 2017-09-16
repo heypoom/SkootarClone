@@ -2,13 +2,13 @@ import Router from 'next/router'
 import Polyline from '@mapbox/polyline'
 import {call, put, select, takeEvery} from 'redux-saga/effects'
 
-import {makeAction, createReducer, remove, change} from './helper'
+import {makeAction, createReducer, remove, change, sum, flatten} from './helper'
 
 // Actions
 export const SEARCH = 'SEARCH'
 export const NEW_PLACE = 'NEW_PLACE'
 
-export const SET_LOCATION = 'SET_LOCATION'
+export const UPDATE_LOCATION = 'UPDATE_LOCATION'
 export const SET_PIN = 'SET_PIN'
 export const SET_PINS = 'SET_PINS'
 export const REMOVE_PIN = 'REMOVE_PIN'
@@ -22,7 +22,7 @@ export const TO_SUMMARY = 'TO_SUMMARY'
 export const search = makeAction(SEARCH, 'text', 'index')
 export const newPlace = makeAction(NEW_PLACE)
 
-export const setLocation = makeAction(SET_LOCATION)
+export const updateLocation = makeAction(UPDATE_LOCATION)
 export const setPin = makeAction(SET_PIN, 'position', 'index')
 export const setPins = makeAction(SET_PINS)
 export const removePin = makeAction(REMOVE_PIN)
@@ -45,7 +45,7 @@ export const renderPolyline = data => ({
 })
 
 // Retrieve the marker coordinates, then puts the marker onto the map.
-export const computeMarkers = (legs, places) => {
+export const renderMarkers = (legs, places) => {
   // Extract the coordinates required for markers
   const dest = legs[legs.length - 1]
 
@@ -73,22 +73,17 @@ export const computeMarkers = (legs, places) => {
 }
 
 // Selects only the distance and duration
-const legSelector = route =>
-  route.legs.map(leg => ({
-    distance: leg.distance.value,
-    duration: leg.duration.value
-  }))
-
-// Flatten the array
-const flatten = (acc, cur) => acc.concat(cur)
+// prettier-ignore
+const legSelector = route => route.legs.map(leg => ({
+  distance: leg.distance.value,
+  duration: leg.duration.value
+}))
 
 // Get the sum of distances and durations
-const sum = key => paths =>
-  paths.map(x => x[key]).reduce((prev, cur) => prev + cur)
-
 const totalDistance = sum('distance')
 const totalDuration = sum('duration')
 
+// Promise Wrapper for Google Maps' Directions Services
 const computeRoutes = config =>
   new Promise((resolve, reject) => {
     if (google) {
@@ -135,7 +130,7 @@ export function* locationSaga() {
     yield put(computeTotals(routes))
 
     // Display the pins on the map
-    yield put(computeMarkers(route.legs, places))
+    yield put(renderMarkers(route.legs, places))
 
     // Display the polyline paths on the map
     yield put(renderPolyline(route.overview_polyline))
@@ -156,7 +151,7 @@ export function* geocodeSaga() {
 }
 
 export function* appWatcherSaga() {
-  yield takeEvery(SET_LOCATION, locationSaga)
+  yield takeEvery(UPDATE_LOCATION, locationSaga)
   yield takeEvery(TO_SUMMARY, toSummarySaga)
 }
 
