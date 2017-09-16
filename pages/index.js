@@ -8,6 +8,7 @@ import DistanceInfo from '../components/DistanceInfo'
 
 const FullView = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
@@ -39,10 +40,9 @@ const Top = styled.div`
 `
 
 const Bottom = styled.div`
-  position: fixed;
-  bottom: 1.8em;
-  left: 0;
-  width: 90%;
+  width: 100%;
+  padding: 1em;
+  background: white;
 `
 
 const Landing = () => (
@@ -51,9 +51,7 @@ const Landing = () => (
       <FindGroup />
     </Top>
     <Map />
-    <Bottom>
-      <DistanceInfo />
-    </Bottom>
+    <DistanceInfo />
   </FullView>
 )
 

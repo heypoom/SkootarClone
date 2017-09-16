@@ -82,15 +82,10 @@ const RemoveIcon = styled(Icon)`
   }
 `
 
-const Find = ({
-  inputProps,
-  onSelect,
-  submit,
-  classNames,
-  remove,
-  index,
-  total
-}) => (
+// We can turn off the places attribution because it's used on Google Maps.
+// Ref: https://developers.google.com/places/web-service/policies#logo_requirements
+// prettier-ignore
+const Find = ({inputProps, onSelect, submit, classNames, remove, index, total}) => (
   <SearchBox>
     <PinIcon i='location' size={2.5} fill='#00cae9' onClick={submit} />
     <PlacesAutocomplete
@@ -100,7 +95,7 @@ const Find = ({
       onSelect={onSelect}
       onEnterKeyDown={submit}
     />
-    {// prettier-ignore
+    {
       (index > 0 && total > 2) && (
         <RemoveIcon
           i='remove_circle'

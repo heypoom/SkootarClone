@@ -24,11 +24,13 @@ const LocationLabel = styled.div`
   align-items: center;
   font-family: Roboto, Sukhumvit Set;
   font-size: 1.1em;
+  line-height: 1.5em;
 `
 
 const AddressLabel = styled.span`
   font-size: 0.75em;
   font-family: Roboto, Sukhumvit Set;
+  line-height: 1.7em;
 `
 
 const Input = styled.input`
