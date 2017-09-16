@@ -34,7 +34,7 @@ const Top = styled.div`
   bottom: 4em;
 
   @media screen and (max-width: 640px) {
-    width: 80%;
+    width: 88%;
   }
 `
 
@@ -42,7 +42,7 @@ const Bottom = styled.div`
   position: fixed;
   bottom: 1.8em;
   left: 0;
-  width: 100%;
+  width: 90%;
 `
 
 const Landing = () => (

@@ -7,9 +7,10 @@
   * @example state => ({ SET_NAME: name => ({...state, name}) })
   */
 export function createReducer(initialState, handlers) {
-  return (state = initialState, action) => handlers(state)[action.type]
-    ? handlers(state)[action.type](action.payload)
-    : state
+  return (state = initialState, action) =>
+    handlers(state)[action.type]
+      ? handlers(state)[action.type](action.payload)
+      : state
 }
 
 /**
@@ -29,5 +30,23 @@ export function makeAction(type, ...argNames) {
       return {type, payload}
     }
   }
-  return payload => (payload ? ({type, payload}) : ({type}))
+  return payload => (payload ? {type, payload} : {type})
+}
+
+// Simple Immutability Helpers
+
+// Remove Item from array
+// prettier-ignore
+export const remove = (index, data) => index === 0 ? data.slice(1) : [
+  ...data.slice(0, index),
+  ...data.slice(index + 1, data.length)
+]
+
+// Change an item in array
+// TODO: Make this immutable
+export const change = (index, item, items) => {
+  const data = items
+  items[index] = item
+
+  return [...data]
 }

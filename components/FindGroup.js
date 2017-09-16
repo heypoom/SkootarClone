@@ -9,7 +9,7 @@ import {search, newPlace} from '../ducks/app'
 
 const AddIcon = styled(Icon)`
   position: absolute;
-  right: 0;
+  right: 0.8em;
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.16));
   transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
   cursor: pointer;
@@ -26,6 +26,7 @@ const FindGroup = ({search, fields, newPlace}) => (
     {fields.map((value, index) => (
       <Find
         onChange={text => search(text, index)}
+        total={fields.length}
         index={index}
         value={value}
         key={index}

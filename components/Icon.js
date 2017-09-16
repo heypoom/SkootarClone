@@ -7,7 +7,8 @@ const icons = {
              2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z`,
   add_location: `M12 2C8.14 2 5 5.14 5 9c0 5.25 7 13 7 13s7-7.75
                  7-13c0-3.86-3.14-7-7-7zm4 8h-3v3h-2v-3H8V8h3V5h2v3h3v2z`,
-  add_circle: `M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z`
+  add_circle: `M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z`,
+  remove_circle: `M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z`
 }
 
 const Svg = styled(props => <svg {...props} />)`
@@ -17,10 +18,13 @@ const Svg = styled(props => <svg {...props} />)`
   opacity: ${props => props.opacity || 1};
 `
 
-const Icon = ({i, ...props}) => icons[i] ? (
-  <Svg viewBox='0 0 24 24' {...props}>
-    <path d={icons[i]} />
-  </Svg>
-) : <div />
+const Icon = ({i, ...props}) =>
+  icons[i] ? (
+    <Svg viewBox='0 0 24 24' {...props}>
+      <path d={icons[i]} />
+    </Svg>
+  ) : (
+    <div />
+  )
 
 export default Icon

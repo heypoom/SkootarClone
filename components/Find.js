@@ -7,9 +7,9 @@ import PlacesAutocomplete from 'react-places-autocomplete'
 
 import Icon from './Icon'
 
-import {setLocation} from '../ducks/app'
+import {setLocation, removePin} from '../ducks/app'
 
-const inputStyle = css`
+export const inputStyle = css`
   background: #ffffff;
   border: none;
   border-bottom: 2px solid #00cae9;
@@ -65,9 +65,34 @@ const PinIcon = styled(Icon)`
   }
 `
 
-const Find = ({inputProps, onSelect, submit, classNames}) => (
+const RemoveIcon = styled(Icon)`
+  position: absolute;
+  right: 0.4em;
+  top: 0.3em;
+
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.16));
+  stroke: white;
+  stroke-width: 1.3;
+  transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.1);
+    fill: #c0392b;
+  }
+`
+
+const Find = ({
+  inputProps,
+  onSelect,
+  submit,
+  classNames,
+  remove,
+  index,
+  total
+}) => (
   <SearchBox>
-    <PinIcon i='location' size={2.5} fill='#00cae9' onClick={setLocation} />
+    <PinIcon i='location' size={2.5} fill='#00cae9' onClick={submit} />
     <PlacesAutocomplete
       inputProps={inputProps}
       classNames={classNames}
@@ -75,6 +100,15 @@ const Find = ({inputProps, onSelect, submit, classNames}) => (
       onSelect={onSelect}
       onEnterKeyDown={submit}
     />
+    {// prettier-ignore
+      (index > 0 && total > 2) && (
+        <RemoveIcon
+          i='remove_circle'
+          size={1.75}
+          fill='#e74c3c'
+          onClick={remove}
+        />
+      )}
   </SearchBox>
 )
 
@@ -95,12 +129,18 @@ const injectProps = props => ({
   submit: address => {
     props.setLocation(props.index, address)
   },
+  remove: () => {
+    props.removePin(props.index)
+  },
   onSelect: address => {
     props.onChange(address)
     props.setLocation(props.index, address)
   }
 })
 
-const enhance = compose(connect(null, {setLocation}), withProps(injectProps))
+const enhance = compose(
+  connect(null, {setLocation, removePin}),
+  withProps(injectProps)
+)
 
 export default enhance(Find)

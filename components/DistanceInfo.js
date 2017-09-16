@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import styled from 'react-emotion'
 import Ink from 'react-ink'
 
+import {toSummary} from '../ducks/app'
+
 const Inline = styled.div`
   display: flex;
   align-items: center;
@@ -10,7 +12,7 @@ const Inline = styled.div`
 `
 
 const Text = styled.span`
-  font-size: 1.55em;
+  font-size: 1.5em;
   font-weight: 300;
   color: #555;
 
@@ -26,6 +28,7 @@ const Text = styled.span`
 `
 
 const Button = styled.button`
+  text-decoration: none;
   position: relative;
   background: #2ecc71;
   color: #fefefe;
@@ -42,13 +45,18 @@ const Button = styled.button`
   &:hover {
     transform: scale(1.05);
   }
+
+  @media screen and (max-width: 600px) {
+    font-size: 1.2em;
+    padding: 0.34em 1em;
+  }
 `
 
-const DistanceInfo = ({distance, duration}) => (
+const DistanceInfo = ({toSummary, distance, duration}) => (
   <Inline>
     <Text>Total: {distance}KM</Text>
     <Text>{duration} mins</Text>
-    <Button>
+    <Button onClick={toSummary}>
       Next
       <Ink />
     </Button>
@@ -60,4 +68,4 @@ const mapStateToProps = state => ({
   duration: state.app.duration
 })
 
-export default connect(mapStateToProps)(DistanceInfo)
+export default connect(mapStateToProps, {toSummary})(DistanceInfo)
