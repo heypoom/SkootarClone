@@ -128,8 +128,9 @@ const PinEffect = styled.div`
   }
 `
 
+// Adjust marker position to align with the polyline
 const PinContainer = styled.div`
-  transform: translateY(-18px);
+  transform: translate(5px, -18px);
   z-index: 1;
 `
 

@@ -53,10 +53,10 @@ const totalDuration = sum('duration')
 export function* locationSaga({payload: {index, address}}) {
   const result = yield call(geocodeByAddress, address)
   const position = yield call(getLatLng, result[0])
-  const name = result[0].formatted_address
+  const formatted = result[0].formatted_address
 
   // Side Effect: Adds a new map pin using the retrieved coordinates.
-  yield put(setPin({...position, name}, index))
+  yield put(setPin({...position, address: formatted, name: address}, index))
 
   // Side Effect: Re-compute the total distances/durations everytime a new pin is added.
   yield put(computeTotalPaths())
@@ -89,8 +89,7 @@ export function* toSummarySaga() {
 // Calculates the trip distance and duration using the polyline.
 export function* computeTotalSaga() {
   // Retrieves the pins from the store
-  const data = yield select(state => state.app.pins) || []
-  const pins = data.filter(pin => pin)
+  const pins = (yield select(state => state.app.pins) || []).filter(pin => pin)
 
   // If there are more than 1 pins, retrieve the distance.
   if (google && pins.length > 1) {
@@ -111,7 +110,9 @@ export function* computeTotalSaga() {
       travelMode: 'DRIVING'
     }
 
-    const {routes} = yield call(computeRoutes, config)
+    const directions = yield call(computeRoutes, config)
+    const {routes} = directions
+    console.log('Directions:', directions)
 
     if (routes) {
       // Retrieve the distance in km, and duration in minutes
