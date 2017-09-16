@@ -4,6 +4,7 @@ import styled from 'react-emotion'
 import App from '../components/App'
 import Map from '../components/Map'
 import FindGroup from '../components/FindGroup'
+import DistanceInfo from '../components/DistanceInfo'
 
 const FullView = styled.div`
   display: flex;
@@ -28,9 +29,20 @@ const Top = styled.div`
   left: 1.8em;
   z-index: 1;
 
+  overflow-y: scroll;
+  padding-right: 0.8em;
+  bottom: 4em;
+
   @media screen and (max-width: 640px) {
     width: 80%;
   }
+`
+
+const Bottom = styled.div`
+  position: fixed;
+  bottom: 1.8em;
+  left: 0;
+  width: 100%;
 `
 
 const Landing = () => (
@@ -39,6 +51,9 @@ const Landing = () => (
       <FindGroup />
     </Top>
     <Map />
+    <Bottom>
+      <DistanceInfo />
+    </Bottom>
   </FullView>
 )
 

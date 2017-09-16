@@ -7,7 +7,7 @@ import PlacesAutocomplete from 'react-places-autocomplete'
 
 import Icon from './Icon'
 
-import {geocode} from '../ducks/app'
+import {setLocation} from '../ducks/app'
 
 const inputStyle = css`
   background: #ffffff;
@@ -65,15 +65,15 @@ const PinIcon = styled(Icon)`
   }
 `
 
-const Find = ({inputProps, onSelect, geocode, classNames}) => (
+const Find = ({inputProps, onSelect, submit, classNames}) => (
   <SearchBox>
-    <PinIcon i='location' size={2.5} fill='#00cae9' onClick={geocode} />
+    <PinIcon i='location' size={2.5} fill='#00cae9' onClick={setLocation} />
     <PlacesAutocomplete
       inputProps={inputProps}
       classNames={classNames}
       googleLogo={false}
       onSelect={onSelect}
-      onEnterKeyDown={geocode}
+      onEnterKeyDown={submit}
     />
   </SearchBox>
 )
@@ -92,12 +92,15 @@ const injectProps = props => ({
     onChange: props.onChange,
     placeholder: 'Find Location'
   },
-  onSelect: data => {
-    props.onChange(data)
-    props.geocode(data)
+  submit: address => {
+    props.setLocation(props.index, address)
+  },
+  onSelect: address => {
+    props.onChange(address)
+    props.setLocation(props.index, address)
   }
 })
 
-const enhance = compose(connect(null, {geocode}), withProps(injectProps))
+const enhance = compose(connect(null, {setLocation}), withProps(injectProps))
 
 export default enhance(Find)
