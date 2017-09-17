@@ -45,17 +45,17 @@ export const remove = (index, data) => index === 0 ? data.slice(1) : [
   ...data.slice(index + 1, data.length)
 ]
 
-// Change an item in array
+// Change an item in an array
 // TODO: Make this immutable
 export const change = (index, item, items) => {
   const data = items
 
   if (Array.isArray(item)) {
-    items[index] = [...items[index], ...item]
+    data[index] = [...items[index], ...item]
   } else if (typeof item === 'object') {
-    items[index] = {...items[index], ...item}
+    data[index] = {...items[index], ...item}
   } else {
-    items[index] = item
+    data[index] = item
   }
 
   return [...data]

@@ -12,8 +12,6 @@ import {
   flatten
 } from './helper'
 
-import {SERVICES} from '../core'
-
 /* global google */
 
 // Namespaces the action: 'APP/ACTION_NAME'
@@ -34,6 +32,7 @@ export const SET_CENTER = A('SET_CENTER')
 
 export const TOGGLE_EXTRAS = A('TOGGLE_EXTRAS')
 export const TOGGLE_EXTRAS_MODAL = A('TOGGLE_EXTRAS_MODAL')
+export const SET_RECIPIENT = A('SET_RECIPIENT')
 export const TO_SUMMARY = A('TO_SUMMARY')
 
 // Action Creators
@@ -49,6 +48,7 @@ export const setCenter = Creator(SET_CENTER, 'lat', 'lng')
 
 export const toggleExtras = Creator(TOGGLE_EXTRAS)
 export const toggleExtrasModal = Creator(TOGGLE_EXTRAS_MODAL)
+export const setRecipient = Creator(SET_RECIPIENT, 'index', 'field', 'value')
 export const toSummary = Creator(TO_SUMMARY)
 
 // Selects only the distance and duration
@@ -176,7 +176,13 @@ export function* geocodeSaga() {
 // Promise Wrapper for Geolocation API
 const getPosition = () =>
   new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject)
+    if (typeof navigator !== 'undefined') {
+      if (navigator.geolocation) {
+        return navigator.geolocation.getCurrentPosition(resolve, reject)
+      }
+      reject(new Error('Geolocation is not supported on this browser'))
+    }
+    resolve({coords: {latitude: 13, longitude: 100}})
   })
 
 // Gets the users' location
@@ -200,6 +206,7 @@ const initial = {
   duration: 0,
   polyline: null,
   extras: {},
+  recipients: [],
   extrasModal: false
 }
 
@@ -253,5 +260,9 @@ export default createReducer(initial, state => ({
   [TOGGLE_EXTRAS_MODAL]: () => ({
     ...state,
     extrasModal: !state.extrasModal
+  }),
+  [SET_RECIPIENT]: ({index, field, value}) => ({
+    ...state,
+    recipients: change(index, {[field]: value}, state.recipients)
   })
 }))

@@ -44,7 +44,7 @@ const Summary = ({distance, duration, pricing}) => (
 const costOf = items =>
   items.map(item => SERVICES[item].cost).reduce((prev, curr) => prev + curr, 0)
 
-const pricingSelector = createSelector(
+export const pricingSelector = createSelector(
   state => state.app.distance,
   state => state.app.extras,
   (distance, extras) => {

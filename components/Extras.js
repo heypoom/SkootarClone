@@ -115,7 +115,7 @@ const Extras = ({selected, modal, ...props}) => (
 )
 
 // prettier-ignore
-const extrasSelector = createSelector(
+export const extrasSelector = createSelector(
   state => state.app.extras,
   extras => Object.entries(extras)
     .filter(item => item[1])

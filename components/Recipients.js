@@ -2,10 +2,13 @@ import React from 'react'
 import styled from 'react-emotion'
 import {connect} from 'react-redux'
 import Link from 'next/link'
+import {compose, withProps} from 'recompose'
 
 import Icon from './Icon'
 import {pinType, getPinColor} from './MapPin'
 import {inputStyle} from './Find'
+
+import {setRecipient} from '../ducks/app'
 
 // prettier-ignore
 const Recipient = styled.div`
@@ -84,8 +87,10 @@ const Anchor = styled.b`
   color: inherit;
 `
 
+const fields = ['Name', 'Mobile']
+
 // prettier-ignore
-const Recipients = ({pins}) => (
+const Recipients = ({pins, update, data}) => (
   <div>
     {pins.length > 0 ? pins.map((pin, index) => pin && (
       <Recipient key={index}>
@@ -99,8 +104,14 @@ const Recipients = ({pins}) => (
           </LocationText>
         </LocationLabel>
         <Row>
-          <Input placeholder='Name' />
-          <Input placeholder='Mobile' />
+          {fields.map(field => (
+            <Input
+              key={field}
+              placeholder={field}
+              onChange={update(index, field)}
+              value={data[index] ? (data[index][field] || '') : ''}
+            />
+          ))}
         </Row>
       </Recipient>
     )) : (
@@ -114,8 +125,19 @@ const Recipients = ({pins}) => (
   </div>
 )
 
-const mapStateToProps = state => ({
-  pins: state.app.pins
+const injectProps = props => ({
+  update: (index, field) => e =>
+    props.setRecipient(index, field, e.target.value)
 })
 
-export default connect(mapStateToProps)(Recipients)
+const mapStateToProps = state => ({
+  pins: state.app.pins,
+  data: state.app.recipients
+})
+
+const enhance = compose(
+  connect(mapStateToProps, {setRecipient}),
+  withProps(injectProps)
+)
+
+export default enhance(Recipients)
