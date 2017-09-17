@@ -1,5 +1,4 @@
 import React from 'react'
-import {connect} from 'react-redux'
 import styled from 'react-emotion'
 import {css} from 'emotion'
 import Link from 'next/link'
@@ -7,9 +6,8 @@ import Ink from 'react-ink'
 
 import App from '../components/App'
 import Recipients from '../components/Recipients'
-import Icon from '../components/Icon'
-
-import {PRICING_RATE} from '../core'
+import Extras from '../components/Extras'
+import Summary from '../components/Summary'
 
 const Page = styled.div`
   background: #fbfbfb;
@@ -29,85 +27,10 @@ const Container = styled.main`
   padding: 2em 2em 4em 2em;
 `
 
-const ServicesLabel = styled.div`
-  display: flex;
-  align-items: center;
-  font-size: 1.1em;
-  margin-bottom: 0.5em;
-`
-
-const ExtraContainer = styled.div`margin-bottom: 0.5em;`
-
 // prettier-ignore
-const AddIcon = styled(Icon)`
-  margin-left: 0.5em;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-  border-radius: 50%;
-  transition: 1s cubic-bezier(0.22, 0.61, 0.36, 1) all;
-  cursor: pointer;
-
-  &:hover {
-    fill: #27ae60;
-    transform: scale(1.15);
-  }
-`
-
-const Extras = () => (
-  <ExtraContainer>
-    <ServicesLabel>
-      Extra Services
-      <AddIcon i='add_circle' fill='#555' size={1.5} />
-    </ServicesLabel>
-    <div>
-      <Icon i='location' fill='#555' size={1.5} />
-      <Icon i='add_location' fill='#555' size={1.5} />
-    </div>
-  </ExtraContainer>
-)
-
-const TextRow = styled.div`
-  display: flex;
-  align-items: center;
-
-  line-height: 2em;
-  font-size: 1.1em;
-`
-
-const Left = styled.div`
+const Flex = styled.div`
   flex: 1;
-  text-align: left;
 `
-
-const Right = styled.div`
-  flex: 1;
-  text-align: right;
-  font-weight: 400;
-`
-
-const Summary = ({distance, duration, pricing}) => (
-  <div>
-    <TextRow>
-      <Left>Total Distance</Left>
-      <Right>{distance} KM</Right>
-    </TextRow>
-    <TextRow>
-      <Left>Shipping Time</Left>
-      <Right>{duration} MINS</Right>
-    </TextRow>
-    <TextRow>
-      <Left>Shipping Fee</Left>
-      <Right>{pricing} THB</Right>
-    </TextRow>
-  </div>
-)
-
-const getPricing = distance => (distance * PRICING_RATE).toFixed(2)
-
-const EnhancedSummary = connect(state => ({
-  distance: state.app.distance,
-  duration: state.app.duration,
-  pricing: state.app.pricing || getPricing(state.app.distance)
-}))(Summary)
 
 const Actions = styled.div`
   display: flex;
@@ -159,8 +82,6 @@ const Button = styled.a`
   `}
 `
 
-const Flex = styled.div`flex: 1;`
-
 const Back = () => (
   <Actions>
     <Link href='/' passHref prefetch>
@@ -186,7 +107,7 @@ const Order = () => (
         <Extras />
       </Flex>
       <Flex>
-        <EnhancedSummary />
+        <Summary />
       </Flex>
       <Back />
     </Container>

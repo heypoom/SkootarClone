@@ -4,7 +4,7 @@ import styled from 'react-emotion'
 import App from '../components/App'
 import Map from '../components/Map'
 import FindGroup from '../components/FindGroup'
-import DistanceInfo from '../components/DistanceInfo'
+import Total from '../components/Total'
 
 const FullView = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const Landing = () => (
       <FindGroup />
     </Top>
     <Map />
-    <DistanceInfo />
+    <Total />
   </FullView>
 )
 

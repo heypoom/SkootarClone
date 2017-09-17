@@ -20,7 +20,7 @@ export function createReducer(initialState, handlers) {
   * @param {...string} [argNames] - action argument names
   * @return {function} Returns the Action Creator Function
   */
-export function makeAction(type, ...argNames) {
+export function Creator(type, ...argNames) {
   if (argNames.length > 0) {
     return (...args) => {
       const payload = {}
@@ -32,6 +32,9 @@ export function makeAction(type, ...argNames) {
   }
   return payload => (payload ? {type, payload} : {type})
 }
+
+// Creates a namespaced action factory
+export const createAction = namespace => action => `${namespace}/${action}`
 
 // Simple Immutability Helpers
 

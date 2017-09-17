@@ -2,46 +2,75 @@ import Router from 'next/router'
 import Polyline from '@mapbox/polyline'
 import {call, put, select, takeEvery} from 'redux-saga/effects'
 
-import {makeAction, createReducer, remove, change, sum, flatten} from './helper'
+import {
+  createAction,
+  createReducer,
+  Creator,
+  remove,
+  change,
+  sum,
+  flatten
+} from './helper'
+
+/* global google */
+
+// Namespaces the action: 'APP/ACTION_NAME'
+const A = createAction('APP')
 
 // Actions
-export const SEARCH = 'SEARCH'
-export const NEW_PLACE = 'NEW_PLACE'
+export const SEARCH = A('SEARCH')
+export const NEW_PLACE = A('NEW_PLACE')
 
-export const UPDATE_LOCATION = 'UPDATE_LOCATION'
-export const SET_PIN = 'SET_PIN'
-export const SET_PINS = 'SET_PINS'
-export const REMOVE_PIN = 'REMOVE_PIN'
+export const UPDATE_LOCATION = A('UPDATE_LOCATION')
+export const SET_PIN = A('SET_PIN')
+export const SET_PINS = A('SET_PINS')
+export const REMOVE_PIN = A('REMOVE_PIN')
 
-export const SET_POLYLINE = 'SET_POLYLINE'
-export const SET_TOTAL_PATHS = 'SET_TOTAL_PATHS'
+export const SET_POLYLINE = A('SET_POLYLINE')
+export const SET_TOTAL = A('SET_TOTAL')
+export const SET_CENTER = A('SET_CENTER')
+export const TOGGLE_EXTRAS = A('TOGGLE_EXTRAS')
 
-export const TO_SUMMARY = 'TO_SUMMARY'
+export const TO_SUMMARY = A('TO_SUMMARY')
 
 // Action Creators
-export const search = makeAction(SEARCH, 'text', 'index')
-export const newPlace = makeAction(NEW_PLACE)
+export const search = Creator(SEARCH, 'text', 'index')
+export const newPlace = Creator(NEW_PLACE)
 
-export const updateLocation = makeAction(UPDATE_LOCATION)
-export const setPin = makeAction(SET_PIN, 'position', 'index')
-export const setPins = makeAction(SET_PINS)
-export const removePin = makeAction(REMOVE_PIN)
+export const updateLocation = Creator(UPDATE_LOCATION)
+export const setPin = Creator(SET_PIN, 'position', 'index')
+export const setPins = Creator(SET_PINS)
+export const removePin = Creator(REMOVE_PIN)
+export const setCenter = Creator(SET_CENTER, 'lat', 'lng')
+export const toggleExtras = Creator(TOGGLE_EXTRAS)
 
-export const toSummary = makeAction(TO_SUMMARY)
+export const toSummary = Creator(TO_SUMMARY)
 
+// Selects only the distance and duration
+// prettier-ignore
+const legSelector = route => route.legs.map(leg => ({
+  distance: leg.distance.value,
+  duration: leg.duration.value
+}))
+
+// Get the sum of distances and durations
+const totalDistance = sum('distance')
+const totalDuration = sum('duration')
+
+// Compute the total distance and duration for the entire trip
 export const computeTotals = routes => {
   const paths = routes.map(legSelector).reduce(flatten, [])
   const distance = (totalDistance(paths) / 1000).toFixed(2)
   const duration = Math.round(totalDuration(paths) / 60)
 
-  return {type: SET_TOTAL_PATHS, payload: {distance, duration}}
+  return {type: SET_TOTAL, payload: {distance, duration}}
 }
 
 // Decodes the polyline, then render it onto the map
 // prettier-ignore
 export const renderPolyline = data => ({
   type: SET_POLYLINE,
-  payload: Polyline.decode(data).map(line => new google.maps.LatLng(line[0], line[1]))
+  payload: Polyline.decode(data).map(pos => new google.maps.LatLng(pos[0], pos[1]))
 })
 
 // Retrieve the marker coordinates, then puts the marker onto the map.
@@ -72,17 +101,6 @@ export const renderMarkers = (legs, places) => {
   return setPins(pins)
 }
 
-// Selects only the distance and duration
-// prettier-ignore
-const legSelector = route => route.legs.map(leg => ({
-  distance: leg.distance.value,
-  duration: leg.duration.value
-}))
-
-// Get the sum of distances and durations
-const totalDistance = sum('distance')
-const totalDuration = sum('duration')
-
 // Promise Wrapper for Google Maps' Directions Services
 const computeRoutes = config =>
   new Promise((resolve, reject) => {
@@ -104,7 +122,7 @@ export function* toSummarySaga() {
   if (pins.length > 1) {
     yield call(Router.push, '/order')
   } else {
-    alert('Please select 2 or more locations.')
+    window.alert('Please select 2 or more locations.')
   }
 }
 
@@ -150,17 +168,39 @@ export function* geocodeSaga() {
   // yield put(setPin({...position, address: formatted, name: address}, index))
 }
 
+// Promise Wrapper for Geolocation API
+const getPosition = () =>
+  new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject)
+  })
+
+// Gets the users' location
+export function* geolocateSaga() {
+  const {coords: {latitude, longitude}} = yield call(getPosition)
+  console.log(setCenter(latitude, longitude))
+
+  yield put(setCenter(latitude, longitude))
+}
+
 export function* appWatcherSaga() {
+  yield call(geolocateSaga)
+
   yield takeEvery(UPDATE_LOCATION, locationSaga)
   yield takeEvery(TO_SUMMARY, toSummarySaga)
 }
 
 const initial = {
   search: ['', ''],
+  center: [13.7, 100.5],
   pins: [],
   distance: 0,
   duration: 0,
-  polyline: null
+  polyline: null,
+  extras: {
+    cod: false,
+    returnTrip: false,
+    bigParcel: false
+  }
 }
 
 export default createReducer(initial, state => ({
@@ -168,7 +208,10 @@ export default createReducer(initial, state => ({
     ...state,
     pins: change(index, position, state.pins)
   }),
-  [SET_PINS]: pins => ({...state, pins}),
+  [SET_PINS]: pins => ({
+    ...state,
+    pins
+  }),
   [REMOVE_PIN]: index => {
     if (state.search.length > 1) {
       return {
@@ -187,10 +230,24 @@ export default createReducer(initial, state => ({
     ...state,
     search: change(index, text, state.search)
   }),
-  [SET_TOTAL_PATHS]: ({distance, duration}) => ({
+  [SET_TOTAL]: ({distance, duration}) => ({
     ...state,
     distance,
     duration
   }),
-  [SET_POLYLINE]: polyline => ({...state, polyline})
+  [SET_POLYLINE]: polyline => ({
+    ...state,
+    polyline
+  }),
+  [SET_CENTER]: ({lat, lng}) => ({
+    ...state,
+    center: [lat, lng]
+  }),
+  [TOGGLE_EXTRAS]: item => ({
+    ...state,
+    extras: {
+      ...state.extras,
+      [item]: !state.extras[item]
+    }
+  })
 }))

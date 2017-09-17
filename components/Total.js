@@ -4,7 +4,7 @@ import styled from 'react-emotion'
 import {css} from 'emotion'
 import Ink from 'react-ink'
 
-import Icon from '../components/Icon'
+import Icon from './Icon'
 
 import {toSummary} from '../ducks/app'
 
@@ -71,7 +71,7 @@ const Button = styled.button`
 
 const EnterIcon = styled(Icon)`margin-left: 0.3em;`
 
-const DistanceInfo = ({toSummary, distance, duration}) => (
+const Total = ({toSummary, distance, duration}) => (
   <Inline>
     <Text>Total: {distance} KM</Text>
     <Text hideSmall>{duration} MINS</Text>
@@ -88,4 +88,4 @@ const mapStateToProps = state => ({
   duration: state.app.duration
 })
 
-export default connect(mapStateToProps, {toSummary})(DistanceInfo)
+export default connect(mapStateToProps, {toSummary})(Total)

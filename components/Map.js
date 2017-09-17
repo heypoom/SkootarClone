@@ -9,12 +9,12 @@ import {GMAPS_API_KEY} from '../core'
 import {NaturalMap} from '../core/mapstyle'
 
 // Zoomlevel 17 is perfect for nearby locations
-// Zoomlevel 10 is for regional view
+// Zoomlevel 10 is for centeral view
 const config = {
   bootstrapURLKeys: {
     key: GMAPS_API_KEY
   },
-  defaultCenter: [13.7460577, 100.52407889999995],
+  defaultCenter: [13.7, 100.5],
   defaultZoom: 15,
   options: () => ({
     gestureHandling: 'greedy',
@@ -26,14 +26,14 @@ const config = {
 // This will inject the Google Map Internal APIs into the map.
 class Map extends Component {
   state = {}
-  onLoad = api => this.setState(api)
+  onLoad = api => this.setState({api})
 
   render = () => {
-    const {region, pins, polyline, onMarkerClick} = this.props
-    const api = this.state
+    const {center, pins, polyline, onMarkerClick} = this.props
+    const {api} = this.state
 
     return (
-      <GoogleMap center={region} onGoogleApiLoaded={this.onLoad} {...config}>
+      <GoogleMap center={center} onGoogleApiLoaded={this.onLoad} {...config}>
         {pins &&
           pins.map((props, i) => (
             <Pin
@@ -51,7 +51,8 @@ class Map extends Component {
 
 const mapStateToProps = state => ({
   pins: state.app.pins,
-  polyline: state.app.polyline
+  polyline: state.app.polyline,
+  center: state.app.center
 })
 
 export default connect(mapStateToProps)(Map)
