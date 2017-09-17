@@ -78,6 +78,14 @@ export const renderPolyline = data => ({
   payload: Polyline.decode(data).map(pos => new google.maps.LatLng(pos[0], pos[1]))
 })
 
+// Update the map region according to map bounds
+export const updateCenter = bounds => {
+  const x = (bounds.f.f + bounds.f.b) / 2
+  const y = (bounds.b.b + bounds.b.f) / 2
+
+  return setCenter(x, y)
+}
+
 // Retrieve the marker coordinates, then puts the marker onto the map.
 export const renderMarkers = (legs, places) => {
   // Extract the coordinates required for markers
@@ -148,7 +156,12 @@ export function* locationSaga() {
   const {routes} = yield call(computeRoutes, config)
   const route = routes[0]
 
+  console.log('Route', route)
+
   if (route) {
+    // Update the map centering using the map bounds
+    yield put(updateCenter(route.bounds))
+
     // Update the total distance and duration
     yield put(computeTotals(routes))
 
