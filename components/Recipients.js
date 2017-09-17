@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'react-emotion'
 import {connect} from 'react-redux'
+import Link from 'next/link'
 
 import Icon from './Icon'
 import {pinType, getPinColor} from './MapPin'
@@ -68,27 +69,48 @@ const LocationText = styled.div`
   flex-direction: column;
 `
 
+const Notice = styled.div`
+  font-size: 1.5em;
+  line-height: 1.8em;
+  text-align: center;
+  margin-top: 3em;
+  color: #e74c3c;
+`
+
+const Anchor = styled.b`
+  cursor: pointer;
+  font-weight: 400;
+  text-decoration: none;
+  color: inherit;
+`
+
 // prettier-ignore
 const Recipients = ({pins}) => (
   <div>
-    {
-      pins.map((pin, index) => pin && (
-        <Recipient key={index}>
-          <LocationLabel>
-            <PinIcon i='location' size={1.6} fill='#555' type={pinType(index)} />
-            <LocationText>
-              {pin.name}
-              <AddressLabel>
-                {pin.address}
-              </AddressLabel>
-            </LocationText>
-          </LocationLabel>
-          <Row>
-            <Input placeholder='Name' />
-            <Input placeholder='Mobile' />
-          </Row>
-        </Recipient>
-      ))}
+    {pins.length > 0 ? pins.map((pin, index) => pin && (
+      <Recipient key={index}>
+        <LocationLabel>
+          <PinIcon i='location' size={1.6} fill='#555' type={pinType(index)} />
+          <LocationText>
+            {pin.name}
+            <AddressLabel>
+              {pin.address}
+            </AddressLabel>
+          </LocationText>
+        </LocationLabel>
+        <Row>
+          <Input placeholder='Name' />
+          <Input placeholder='Mobile' />
+        </Row>
+      </Recipient>
+    )) : (
+      <Notice>
+        You haven't added any locations yet! <br />
+        Please, <Link href='/' passHref>
+          <Anchor>select two or more places</Anchor>
+        </Link> before proceeding.
+      </Notice>
+    )}
   </div>
 )
 

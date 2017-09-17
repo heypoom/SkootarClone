@@ -12,6 +12,8 @@ import {
   flatten
 } from './helper'
 
+import {SERVICES} from '../core'
+
 /* global google */
 
 // Namespaces the action: 'APP/ACTION_NAME'
@@ -29,8 +31,9 @@ export const REMOVE_PIN = A('REMOVE_PIN')
 export const SET_POLYLINE = A('SET_POLYLINE')
 export const SET_TOTAL = A('SET_TOTAL')
 export const SET_CENTER = A('SET_CENTER')
-export const TOGGLE_EXTRAS = A('TOGGLE_EXTRAS')
 
+export const TOGGLE_EXTRAS = A('TOGGLE_EXTRAS')
+export const TOGGLE_EXTRAS_MODAL = A('TOGGLE_EXTRAS_MODAL')
 export const TO_SUMMARY = A('TO_SUMMARY')
 
 // Action Creators
@@ -40,10 +43,12 @@ export const newPlace = Creator(NEW_PLACE)
 export const updateLocation = Creator(UPDATE_LOCATION)
 export const setPin = Creator(SET_PIN, 'position', 'index')
 export const setPins = Creator(SET_PINS)
+
 export const removePin = Creator(REMOVE_PIN)
 export const setCenter = Creator(SET_CENTER, 'lat', 'lng')
-export const toggleExtras = Creator(TOGGLE_EXTRAS)
 
+export const toggleExtras = Creator(TOGGLE_EXTRAS)
+export const toggleExtrasModal = Creator(TOGGLE_EXTRAS_MODAL)
 export const toSummary = Creator(TO_SUMMARY)
 
 // Selects only the distance and duration
@@ -177,8 +182,6 @@ const getPosition = () =>
 // Gets the users' location
 export function* geolocateSaga() {
   const {coords: {latitude, longitude}} = yield call(getPosition)
-  console.log(setCenter(latitude, longitude))
-
   yield put(setCenter(latitude, longitude))
 }
 
@@ -196,11 +199,8 @@ const initial = {
   distance: 0,
   duration: 0,
   polyline: null,
-  extras: {
-    cod: false,
-    returnTrip: false,
-    bigParcel: false
-  }
+  extras: {},
+  extrasModal: false
 }
 
 export default createReducer(initial, state => ({
@@ -249,5 +249,9 @@ export default createReducer(initial, state => ({
       ...state.extras,
       [item]: !state.extras[item]
     }
+  }),
+  [TOGGLE_EXTRAS_MODAL]: () => ({
+    ...state,
+    extrasModal: !state.extrasModal
   })
 }))

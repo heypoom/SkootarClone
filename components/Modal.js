@@ -58,10 +58,11 @@ const ModalBox = styled.div`
   width: ${props => props.width};
   min-width: ${props => props.minWidth};
   background: #ffffff;
-  padding: 0.8em;
+  padding: 1.6em 2.5em;
   font-weight: 300;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
   border-radius: 0.2em;
+  border-bottom: 2px solid #27ae60;
   z-index: 1;
 
   animation-name: ${scaleIn};

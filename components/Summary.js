@@ -1,8 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import {createSelector} from 'reselect'
 import styled from 'react-emotion'
 
-import {PRICING_RATE} from '../core'
+import {PRICING_RATE, SERVICES} from '../core'
 
 const TextRow = styled.div`
   display: flex;
@@ -40,12 +41,27 @@ const Summary = ({distance, duration, pricing}) => (
   </div>
 )
 
-const getPricing = distance => (distance * PRICING_RATE).toFixed(2)
+const costOf = items =>
+  items.map(item => SERVICES[item].cost).reduce((prev, curr) => prev + curr, 0)
+
+const pricingSelector = createSelector(
+  state => state.app.distance,
+  state => state.app.extras,
+  (distance, extras) => {
+    const items = Object.entries(extras)
+      .filter(item => item[1])
+      .map(item => item[0])
+
+    const cost = items[0] ? costOf(items) : 0
+
+    return (distance * PRICING_RATE + cost).toFixed(2)
+  }
+)
 
 const mapStateToProps = state => ({
   distance: state.app.distance,
   duration: state.app.duration,
-  pricing: state.app.pricing || getPricing(state.app.distance)
+  pricing: pricingSelector(state)
 })
 
 export default connect(mapStateToProps)(Summary)
